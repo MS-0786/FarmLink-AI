@@ -1,6 +1,48 @@
+// import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 function Login() {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+  email: "",
+  password: "",
+});
+const handleChange = (e) => {
+  setFormData({
+    ...formData,
+    [e.target.name]: e.target.value,
+  });
+};
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Login failed");
+    }
+
+    alert("Login successful!");
+
+    if (data.user.role === "farmer") {
+      navigate("/farmer");
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+};
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
@@ -15,17 +57,21 @@ function Login() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-5">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
             <label className="font-medium text-gray-700">
               Email
             </label>
 
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-            />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                required
+                className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+              />
           </div>
 
           <div>
@@ -35,8 +81,12 @@ function Login() {
 
             <input
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Enter your password"
-              className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+              required
+              className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
             />
           </div>
 
