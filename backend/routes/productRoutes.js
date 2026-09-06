@@ -12,7 +12,9 @@ router.post("/", async (req, res) => {
     const savedProduct = await product.save();
 
     res.status(201).json(savedProduct);
-  } catch (error) {
+    } catch (error) {
+    console.error("PRODUCT SAVE ERROR:", error);
+
     res.status(400).json({
       message: error.message,
     });
@@ -22,10 +24,24 @@ router.post("/", async (req, res) => {
 // Get all products
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const { farmerId } = req.query;
+
+    let products;
+
+    if (farmerId) {
+      products = await Product.find({ farmerId }).sort({
+        createdAt: -1,
+      });
+    } else {
+      products = await Product.find().sort({
+        createdAt: -1,
+      });
+    }
 
     res.json(products);
   } catch (error) {
+    console.error("GET PRODUCTS ERROR:", error);
+
     res.status(500).json({
       message: error.message,
     });
