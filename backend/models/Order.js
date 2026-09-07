@@ -13,6 +13,11 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
+    buyerEmail: {
+      type: String,
+      required: true,
+    },
+
     farmerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -24,39 +29,75 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,
-    },
+    products: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
 
-    cropName: {
-      type: String,
-      required: true,
-    },
+        cropName: {
+          type: String,
+          required: true,
+        },
 
-    quantity: {
-      type: Number,
-      required: true,
-    },
+        farmerName: {
+          type: String,
+          required: true,
+        },
 
-    pricePerKg: {
-      type: Number,
-      required: true,
-    },
+        quantity: {
+          type: Number,
+          required: true,
+        },
 
-    totalPrice: {
+        pricePerKg: {
+          type: Number,
+          required: true,
+        },
+
+        totalPrice: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+
+    totalAmount: {
       type: Number,
       required: true,
     },
 
     status: {
       type: String,
-      enum: ["Pending", "Accepted", "Rejected", "Delivered"],
+      enum: [
+        "Pending",
+        "Accepted",
+        "Rejected",
+        "Confirmed",
+        "In Transit",
+        "Delivered",
+        "Cancelled",
+      ],
       default: "Pending",
     },
+
+    driverLocation: {
+      latitude: {
+        type: Number,
+      },
+      longitude: {
+        type: Number,
+      },
+      updatedAt: {
+        type: Date,
+      },
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 const Order = mongoose.model("Order", orderSchema);
